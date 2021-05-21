@@ -4,28 +4,28 @@ use strict;
 use warnings;
 use feature 'say';
 
-use HTML::TreeBuilder;
+use Net::LastFM;
 
 my $username = shift || 'davorg';
-my $url = "https://www.last.fm/user/$username/library/artists";
+my $method   = 'user.getTopArtists';
 
-my $tree = HTML::TreeBuilder->new_from_url($url);
+my $lastfm = Net::LastFM->new(
+  api_key    => $ENV{LASTFM_API_KEY},
+  api_secret => $ENV{LASTFM_SECRET},
+);
 
-my ($table) =  $tree->look_down(
-  class => qr/\bchartlist\b/,
+my $data = $lastfm->request_signed(
+  method => $method,
+  user   => $username,
 );
 
 my @artists;
 
-my @rows = $table->look_down(_tag => 'tr', class => qr/chartlist-row/);
-for (@rows) {
-  my $name = $_->look_down(_tag => 'td', class => qr/chartlist-name/);
-  my $count = $_->look_down(_tag => 'span', class => qw/chartlist-count-bar-value/);
-  my $x = $count->content->[0] =~ s/,//gr;
+for (@{$data->{topartists}{artist}}) {
+  next if $_->{playcount} >= 1000;
+  next if $_->{playcount} <= 500;
 
-  next if $x >= 1000 or $x <= 500;
-
-  push @artists, $name->look_down(_tag => 'a')->content->[0];
+  push @artists, $_->{name};
 }
 
 say $artists[ rand @artists ];
