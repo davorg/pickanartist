@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use feature 'say';
+
+use HTML::TreeBuilder;
+use Data::Dumper;
+
+my $username = shift || 'davorg';
+my $url = "https://www.last.fm/user/$username/library/artists";
+
+my $tree = HTML::TreeBuilder->new_from_url($url);
+
+my ($table) =  $tree->look_down(
+  class => qr/\bchartlist\b/,
+);
+
+my @artists;
+
+my @rows = $table->look_down(_tag => 'tr', class => qr/chartlist-row/);
+for (@rows) {
+  my $name = $_->look_down(_tag => 'td', class => qr/chartlist-name/);
+  my $count = $_->look_down(_tag => 'span', class => qw/chartlist-count-bar-value/);
+  my $x = $count->content->[0] =~ s/,//gr;
+
+  next if $x >= 1000 or $x <= 500;
+
+  push @artists, $name->look_down(_tag => 'a')->content->[0];
+}
+
+say $artists[ rand @artists ];
