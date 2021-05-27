@@ -5,8 +5,20 @@ use warnings;
 use feature 'say';
 
 use Net::LastFM;
+use Getopt::Long;
 
-my $username = shift || 'davorg';
+my ($username, $min, $max) = qw[davorg 500 1000];
+
+if (@ARGV == 1) {
+  $username = shift;
+} else {
+  my %opts;
+  GetOptions(\%opts, 'user=s', 'min=i', 'max=i');
+  $opts{user} and $username = $opts{user};
+  $opts{min}  and $min      = $opts{min};
+  $opts{max}  and $max      = $opts{max};
+}
+
 my $method   = 'user.getTopArtists';
 
 my $lastfm = Net::LastFM->new(
@@ -22,8 +34,8 @@ my $data = $lastfm->request_signed(
 my @artists;
 
 for (@{$data->{topartists}{artist}}) {
-  next if $_->{playcount} >= 1000;
-  next if $_->{playcount} <= 500;
+  next if $_->{playcount} >= $max;
+  next if $_->{playcount} <= $min;
 
   push @artists, $_->{name};
 }
