@@ -19,25 +19,31 @@ if (@ARGV == 1) {
   $opts{max}  and $max      = $opts{max};
 }
 
-my $method   = 'user.getTopArtists';
+say pickartist($username, $min, $max);
 
-my $lastfm = Net::LastFM->new(
-  api_key    => $ENV{LASTFM_API_KEY},
-  api_secret => $ENV{LASTFM_SECRET},
-);
+sub pickartist {
+  my ($username, $min, $max) = @_;
 
-my $data = $lastfm->request_signed(
-  method => $method,
-  user   => $username,
-);
+  my $method   = 'user.getTopArtists';
 
-my @artists;
+  my $lastfm = Net::LastFM->new(
+    api_key    => $ENV{LASTFM_API_KEY},
+    api_secret => $ENV{LASTFM_SECRET},
+  );
 
-for (@{$data->{topartists}{artist}}) {
-  next if $_->{playcount} >= $max;
-  next if $_->{playcount} <= $min;
+  my $data = $lastfm->request_signed(
+    method => $method,
+    user   => $username,
+  );
 
-  push @artists, $_->{name};
+  my @artists;
+
+  for (@{$data->{topartists}{artist}}) {
+    next if $_->{playcount} >= $max;
+    next if $_->{playcount} <= $min;
+
+    push @artists, $_->{name};
+  }
+
+  return $artists[ rand @artists ];
 }
-
-say $artists[ rand @artists ];
