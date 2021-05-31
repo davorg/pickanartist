@@ -25,25 +25,31 @@ sub pickartist {
   my ($username, $min, $max) = @_;
 
   my $method   = 'user.getTopArtists';
+  my $page     = 1;
 
   my $lastfm = Net::LastFM->new(
     api_key    => $ENV{LASTFM_API_KEY},
     api_secret => $ENV{LASTFM_SECRET},
   );
 
-  my $data = $lastfm->request_signed(
-    method => $method,
-    user   => $username,
-  );
+  my (@artists, $data);
 
-  my @artists;
+  do {
+    $data = $lastfm->request_signed(
+      method => $method,
+      user   => $username,
+      page   => $page,
+    );
 
-  for (@{$data->{topartists}{artist}}) {
-    next if $_->{playcount} >= $max;
-    next if $_->{playcount} <= $min;
+    for (@{$data->{topartists}{artist}}) {
+      next if $_->{playcount} >= $max;
+      next if $_->{playcount} <= $min;
 
-    push @artists, $_->{name};
-  }
+      push @artists, $_->{name};
+    }
+
+    ++$page;
+  } until $data->{topartists}{artist}[-1]{playcount} < $min;
 
   return $artists[ rand @artists ];
 }
