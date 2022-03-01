@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -CS
 
 use strict;
 use warnings;
@@ -19,7 +19,9 @@ if (@ARGV == 1) {
   $opts{max}  and $max      = $opts{max};
 }
 
-say pickartist($username, $min, $max);
+my $artist = pickartist($username, $min, $max);
+
+say "$artist->[0] ($artist->[1])";
 
 sub pickartist {
   my ($username, $min, $max) = @_;
@@ -45,7 +47,7 @@ sub pickartist {
       next if $_->{playcount} >= $max;
       next if $_->{playcount} <= $min;
 
-      push @artists, $_->{name};
+      push @artists, [ $_->{name}, $_->{playcount} ];
     }
 
     ++$page;
