@@ -44,14 +44,17 @@ sub pickartist {
     );
 
     for (@{$data->{topartists}{artist}}) {
-      next if $_->{playcount} >= $max;
-      next if $_->{playcount} <= $min;
+      next if $_->{playcount} > $max;
+      next if $_->{playcount} < $min;
 
       push @artists, [ $_->{name}, $_->{playcount} ];
     }
 
     ++$page;
   } until $data->{topartists}{artist}[-1]{playcount} < $min;
+
+  die "No artists with between $min and $max plays for $username\n"
+    unless @artists;
 
   return $artists[ rand @artists ];
 }
