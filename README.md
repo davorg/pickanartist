@@ -16,3 +16,9 @@ That way I hope to get artists that I like (so I've listened to them
 over 500 times) but that I don't listen to a lot.
 
 For more details, see [this blog post](https://dev.to/davorg/solving-simple-problems-4p2f).
+
+## Command line options
+
+* `-user` : Last.fm username (defaults to "davorg")
+* `-min` : The minimum number of plays to consider (default 500)
+* `-max` : The maximum number of plays to consider (default 1000)
