@@ -21,7 +21,7 @@ class App::LastFM::PickAnArtist {
   method run {
     my $artist = $self->pickartist;
 
-    say "$artist->[0] ($artist->[1])";
+    say "$artist->{name} ($artist->{playcount})";
   }
 
   method pickartist {
@@ -41,7 +41,7 @@ class App::LastFM::PickAnArtist {
         next if $_->{playcount} > $max;
         next if $_->{playcount} < $min;
 
-        push @artists, [ $_->{name}, $_->{playcount} ];
+        push @artists, $_;
       }
 
       ++$page;
