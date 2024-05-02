@@ -4,6 +4,7 @@ class App::LastFM::PickAnArtist {
 
   use strict;
   use warnings;
+  no warnings 'experimental::class';
   use feature 'say';
 
   use Net::LastFM;
@@ -54,3 +55,5 @@ class App::LastFM::PickAnArtist {
   }
 
 }
+
+1;
