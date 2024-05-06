@@ -18,16 +18,18 @@ class App::LastFM::PickAnArtist {
     api_secret => $ENV{LASTFM_SECRET},
   );
   field $method   = 'user.getTopArtists';
+  field @artists;
+  field $artist;
 
   method run {
-    my $artist = $self->pickartist;
-
-    say "$artist->{name} ($artist->{playcount})";
+    $self->getartists;
+    $self->pickartist;
+    $self->render;
   }
 
-  method pickartist {
+  method getartists {
 
-    my (@artists, $data);
+    my ($data);
     my $page = 1;
 
     do {
@@ -50,8 +52,14 @@ class App::LastFM::PickAnArtist {
 
     die "No artists with between $min and $max plays for $username\n"
       unless @artists;
+  }
 
-    return $artists[ rand @artists ];
+  method pickartist {
+    $artist = $artists[ rand @artists ];
+  }
+
+  method render {
+    say "$artist->{name} ($artist->{playcount})";
   }
 
 }
