@@ -15,7 +15,7 @@ class App::LastFM::PickAnArtist {
   field $max      :param = 1000;
   field $lastfm   = Net::LastFM->new(
     api_key    => $ENV{LASTFM_API_KEY},
-    api_secret => $ENV{LASTFM_SECRET},
+    api_secret => $ENV{LASTFM_API_SECRET},
   );
   field $method   = 'user.getTopArtists';
   field @artists;
