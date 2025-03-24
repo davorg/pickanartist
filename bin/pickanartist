@@ -16,9 +16,24 @@ if (@ARGV == 1) {
   $lastfm = App::LastFM::PickAnArtist->new(username => $ARGV[0]);
 } else {
   my %opts;
-  GetOptions(\%opts, 'user=s', 'min=i', 'max=i');
+  GetOptions(\%opts, 'user=s', 'min=i', 'max=i', 'range=s');
+
+  parse_range(\%opts) if $opts{range};
 
   $lastfm = App::LastFM::PickAnArtist->new(%opts);
 }
 
 $lastfm->run;
+
+sub parse_range {
+  my $opts = shift;
+  my $range = delete $opts->{range};
+
+  if (my ($min, $max) = $range =~ /^(\d+)\-(\d+)$/) {
+    die "Min must be less than max\n" if $min > $max;
+    @{$opts}{qw[min max]} = ($min, $max);
+  } else {
+    die "Invalid range: $range\n";
+  }
+
+}
