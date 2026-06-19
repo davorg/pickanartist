@@ -25,7 +25,7 @@ Clone the repository and install the required CPAN modules:
 ```
 git clone https://github.com/davorg/pickanartist.git
 cd pickanartist
-cpanm Feature::Compat::Class Net::LastFM
+cpanm --installdeps .
 ```
 
 ## Configuration
